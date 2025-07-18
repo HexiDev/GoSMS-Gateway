@@ -13,7 +13,6 @@ import (
 	"github.com/tarm/serial"
 )
 
-
 type Config struct {
 	SerialPort string `json:"serial_port"`
 	HTTPPort   int    `json:"http_port"`
@@ -127,7 +126,6 @@ func sendSMS(port io.ReadWriter, phone, message string) error {
 	}
 	return nil
 }
-
 
 func main() {
 	cfg := loadConfig()
