@@ -1,0 +1,4 @@
+{
+  "serial_port": "/dev/mhi_DUN",
+  "http_port": 5643
+}
