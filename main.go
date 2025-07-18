@@ -19,23 +19,28 @@ type Config struct {
 	HTTPPort   int    `json:"http_port"`
 }
 
-func loadConfig(path string) Config {
+func loadConfig() Config {
 	// Defaults
 	cfg := Config{
 		SerialPort: "/dev/mhi_DUN",
 		HTTPPort:   5643,
 	}
-	f, err := os.Open(path)
-	if err != nil {
-		log.Printf("Config file not found, using defaults: %v", err)
-		return cfg
+	// Try /etc/config/gosms-config.json first, then ./gosms-config.json
+	paths := []string{"/etc/config/gosms-config.json", "gosms-config.json"}
+	for _, path := range paths {
+		f, err := os.Open(path)
+		if err == nil {
+			defer f.Close()
+			dec := json.NewDecoder(f)
+			if err := dec.Decode(&cfg); err != nil {
+				log.Printf("Error parsing config file %s, using defaults: %v", path, err)
+			} else {
+				log.Printf("Loaded config from %s", path)
+				return cfg
+			}
+		}
 	}
-	defer f.Close()
-	dec := json.NewDecoder(f)
-	if err := dec.Decode(&cfg); err != nil {
-		log.Printf("Error parsing config file, using defaults: %v", err)
-		return cfg
-	}
+	log.Printf("Config file not found, using defaults")
 	return cfg
 }
 
@@ -125,7 +130,7 @@ func sendSMS(port io.ReadWriter, phone, message string) error {
 
 
 func main() {
-	cfg := loadConfig("config.json")
+	cfg := loadConfig()
 	log.Printf("Using serial port: %s", cfg.SerialPort)
 	log.Printf("Using HTTP port: %d", cfg.HTTPPort)
 
