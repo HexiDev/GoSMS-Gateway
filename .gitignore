@@ -1,11 +1,11 @@
 # Binaries
-*.exe
 *.dll
 *.so
 *.dylib
 *.out
 *.a
 *.o
+out/
 
 # Go build cache
 *.test
@@ -29,5 +29,3 @@ Thumbs.db
 # Node.js example files
 node_modules/
 
-# Ignore example JS output
-send_sms_example.js
